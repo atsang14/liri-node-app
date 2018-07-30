@@ -2,6 +2,7 @@ var dotenv 		= require("dotenv").config();
 var Twitter 	= require('twitter');
 var Spotify 	= require('node-spotify-api');
 var request 	= require("request");
+var fs 			= require('fs');
 var command 	= process.argv[2];
 var songName	= process.argv[3];
 
@@ -111,7 +112,7 @@ else if(command == 'spotify-this-song') {
 /////////////////////////////////////////////////////////
 else if(command == 'movie-this') {
 	
-	var movieName	= process.argv[3];
+	var movieName = process.argv[3];
 
 	if (movieName != null) {
 		request("http://www.omdbapi.com/?t="+movieName+"=&plot=short&apikey=trilogy", function(error, response, body) {
@@ -144,6 +145,46 @@ else if(command == 'movie-this') {
 		console.log("It's on Netflix!");
 	}
 	
+} 
+/////////////////////////////////////////////////////////
+//////////////////do-what-it-says////////////////////////
+/////////////////////////////////////////////////////////
+else if(command == 'do-what-it-says') {
+
+	fs.readFile('random.txt', "utf8", function(error, data) {
+		 // If the code experiences any errors it will log the error to the console.
+  		if (error) {
+    		return console.log(error);
+  		}
+
+  		console.log(data);
+
+		spotify.search({ type: 'track', query: data })
+	  	.then(function(response) {
+	  		
+	  		var artists = response.tracks.items[0].album.artists;
+			
+			// loops over all the artists  	
+	  		for(var i = 0; i < artists.length; i++) {
+	  		
+	  			console.log(response.tracks.items[0].album.artists[i].name);	
+	  		
+	  		}
+
+	  		// song name
+			console.log(response.tracks.items[0].name)
+
+	  		// album name
+			console.log(response.tracks.items[0].album.name);
+
+			// preview link
+			console.log(response.tracks.items[0].album.external_urls.spotify);
+
+	  		}).catch(function(err) {
+	    	console.log(err);
+		});
+	});
+
 }
 
 
@@ -156,7 +197,7 @@ else if(command == 'movie-this') {
 //////////////////////////////testing//////////////////////////////
 
 // var keys    	= require('./keys.js');
-// var fs 			= require('fs');
+
 // var request     = require('request');
 
 // client.get('statuses/home_timeline', function(error, tweets, response) {
