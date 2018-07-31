@@ -6,8 +6,7 @@ var fs 			= require('fs');
 var command 	= process.argv[2];
 var songName	= process.argv[3];
 
-
-
+//////////////////////Keys////////////////////////////////
 var client = new Twitter({
 	consumer_key: process.env.TWITTER_CONSUMER_KEY,
 	consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
@@ -28,11 +27,29 @@ if (command == 'my-tweets') {
 	client.get('statuses/home_timeline', function(error, tweets, response) {
 		
 		if(error) throw error;
-	
-		for(var i = 0; i < tweets.length; i++){
+		
+		fs.appendFile("log.txt", command +' ', function(err) {
+		    // If there was an error, we log it and return immediately
+		    if (err) {
+		      return console.log(err);
+		    }
+
+		});
+
+		for(var i = 0; i < tweets.length; i++) {
+
 			console.log(tweets[i].created_at + ': ' + tweets[i].text);
-		}
-  		
+			var text = JSON.stringify(tweets[i].text);
+			fs.appendFile("log.txt", text+' ', function(err) {
+		    // If there was an error, we log it and return immediately
+			    if (err) {
+			      return console.log(err);
+			    }
+
+			});
+		}	
+
+		fs.appendFile("log.txt", '\n');
 	});
 } 
 
@@ -186,8 +203,6 @@ else if(command == 'do-what-it-says') {
 	});
 
 }
-
-
 
 
 
